@@ -1,0 +1,91 @@
+import React from 'react';
+import BaseComponent from '../BaseComponent';
+import * as UI from 'material-ui';
+import TextField from 'material-ui/TextField';
+import MaskedInput from '../react-maskedinput/es6/index';
+
+var id_complement = '';
+
+class MaskedTextField extends BaseComponent {
+
+    constructor(props) {
+        super(props);
+        this._bind('getMaskedTextFieldId','onChange','onBlur','onClick');
+        this.state = {value: '', validValue: true, forceUpdateValue:false}; // set initial value from default value in props
+    }
+
+    componentDidMount(){
+        id_complement = (new Date()).getTime().toString().concat('_');
+        this.setState({value: this.props.value});
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({value: nextProps.value});
+    }
+
+    getMaskedTextFieldId(){
+        return id_complement.concat('MaskedTextField_MaskedInput_id');
+    }
+
+    onChange(e){
+        var changeValue = true;
+        if(this.props.onChangeValidation){
+            changeValue =(this.props.onChangeValidation(e.target.value));
+        }
+        if(changeValue){
+            if(this.props.onChange){
+                this.props.onChange(e); 
+            }
+            this.setState({value:e.target.value, validValue: true});
+        } else {
+            this.setState({validValue:false});
+        }                 
+    }
+
+    onBlur(e){
+        var value = e.target.value.replace((e.target.value==undefined || e.target.value.length==0)?(this.props.placeHolder!=undefined?this.props.placeHolder:'_'):'_','');
+        var valueToUse = value.length>0?this.state.value : '';
+                
+        if(value.length == 0 || value.length == this.props.mask.length) {
+            e.target.value = valueToUse;
+           this.setState({value:valueToUse, validValue: true, forceUpdateValue:true});
+           if(this.props.onChange){
+              this.props.onChange(e); 
+           }
+        }      
+        if(this.props.onBlur){
+            this.props.onBlur(e);
+        }
+        
+       
+    }
+
+    onClick(event){
+        this.setState({forceUpdateValue:false});
+        if(this.props.onClick){
+            this.props.onClick(event);
+        }
+    }
+    
+    render() {
+              
+        return (<TextField  hintText={this.props.hintDate} floatingLabelText={this.props.floatingLabelText}
+                            floatingLabelStyle={this.props.floatingLabelStyle} 
+                            errorText={this.props.errorDate} disabled={this.props.disabled}
+                            floatingLabelFixed={this.props.floatingLabelFixed}
+                            value={this.state.value}
+                            defaultValue={this.props.defaultValue}
+							>
+							<MaskedInput forceUpdateValue={this.state.forceUpdateValue} disabled={this.props.disabled} onClick={this.onClick} onBlur={this.onBlur} onChange={this.onChange} id={this.getMaskedTextFieldId()} mask={this.props.mask} placeholder={this.props.placeHolder} value={this.props.defaultValue}/>
+							</TextField> );
+                
+        
+
+    }
+}
+
+MaskedTextField.propTypes = {
+    mask: React.PropTypes.string
+};
+
+export default MaskedTextField;

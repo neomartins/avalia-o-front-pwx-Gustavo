@@ -8,7 +8,8 @@ website. Clone the project on your local machine (git clone https://github.com/n
 open command prompt (cmd) go to the path where you download the project, go inside avaliacao-front-pwx-Gustavo. 
 Run npm install this will install all the depdencies to run the project. 
 After this the project is ready to run.
-I will generate the docker compose file. This will make it easier to climb the environment.
+I will generate the docker compose file. 
+With the docker generated, to increase the environment, only need to enter the directory where the project was cloned, and run the command (docker-compose up -d), when it finishes it is only access (http: // localhost: 3000 /) .
 
 # About the system
 
